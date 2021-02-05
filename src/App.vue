@@ -68,21 +68,31 @@ export default {
   },
 
   data: () => ({
+    loading: false,
     records: [],
   }),
 
-  async mounted() {
-    try {
-      // https://airtable.com/appPNfSpl4rulv7fg/api/docs#curl/table:notices:list
-      const { data } = await this.$airtable.get(`/notices`, {
-        params: {
-          view: 'Grid view',
-        },
-      })
-      this.records = data.records
-    } catch (error) {
-      // handle error
-    }
+  mounted() {
+    this.fetchRecords()
+  },
+
+  methods: {
+    async fetchRecords() {
+      this.loading = true
+      try {
+        // https://airtable.com/appPNfSpl4rulv7fg/api/docs#curl/table:notices:list
+        const { data } = await this.$airtable.get(`/notices`, {
+          params: {
+            view: 'Grid view',
+          },
+        })
+        this.records = data.records
+      } catch (error) {
+        // handle error
+      } finally {
+        this.loading = false
+      }
+    },
   },
 }
 </script>
